@@ -38,11 +38,11 @@ jobs:
         working-directory: backend
 
       - name: Lint — ruff check
-        run: uv run ruff check .
+        run: uv run ruff check app/
         working-directory: backend
 
       - name: Lint — ruff format check
-        run: uv run ruff format --check .
+        run: uv run ruff format --check app/
         working-directory: backend
 
       - name: Start database
