@@ -67,6 +67,7 @@ def test_reset_password_inactive_user(client: TestClient, db: Session) -> None:
 
 
 def test_reset_password_new_password_too_short(client: TestClient) -> None:
+
     from app.utils import generate_password_reset_token
 
     token = generate_password_reset_token(email=settings.FIRST_SUPERUSER)

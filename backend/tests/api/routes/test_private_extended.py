@@ -43,7 +43,8 @@ def test_create_private_user_empty_body(client: TestClient) -> None:
 # Duplicate email 
 
 
-def test_create_private_user_duplicate_email(client: TestClient) -> None:  # noqa: ARG001
+def test_create_private_user_duplicate_email(client: TestClient) -> None:
+
     payload = {
         "email": "duplicate2@example.com",
         "password": "password123",
