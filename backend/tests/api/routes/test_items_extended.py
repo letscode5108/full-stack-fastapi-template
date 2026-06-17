@@ -170,7 +170,7 @@ def test_normal_user_sees_only_own_items(
 
 
 def test_normal_user_can_update_own_item(
-    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+    client: TestClient, normal_user_token_headers: dict[str, str], 
 ) -> None:
     # create item as normal user first
     create_response = client.post(

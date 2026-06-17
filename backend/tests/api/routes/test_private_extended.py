@@ -58,7 +58,7 @@ def test_create_private_user_duplicate_email(
 
     
     import pytest
-    with pytest.raises(Exception):
+    with pytest.raises(Exception) as exc_info:
         client.post(
             f"{settings.API_V1_STR}/private/users/", json=payload
         )
