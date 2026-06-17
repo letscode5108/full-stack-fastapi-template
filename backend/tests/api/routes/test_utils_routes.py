@@ -50,7 +50,6 @@ def test_send_test_email_no_auth(client: TestClient) -> None:
 def test_send_test_email_invalid_email(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
-    # email_to is EmailStr — invalid format should be rejected
     response = client.post(
         f"{settings.API_V1_STR}/utils/test-email/",
         headers=superuser_token_headers,

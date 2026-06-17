@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
@@ -6,7 +7,6 @@ from app.models import User
 
 
 
-# Missing required fields —
 
 def test_create_private_user_missing_email(client: TestClient) -> None:
     response = client.post(
@@ -43,25 +43,18 @@ def test_create_private_user_empty_body(client: TestClient) -> None:
 # Duplicate email 
 
 
-def test_create_private_user_duplicate_email(
-    client: TestClient, db: Session
-) -> None:
+def test_create_private_user_duplicate_email(client: TestClient) -> None:  # noqa: ARG001
     payload = {
         "email": "duplicate2@example.com",
         "password": "password123",
         "full_name": "First User",
     }
-    first = client.post(
-        f"{settings.API_V1_STR}/private/users/", json=payload
-    )
+    first = client.post(f"{settings.API_V1_STR}/private/users/", json=payload)
     assert first.status_code == 200
 
-    
-    import pytest
-    with pytest.raises(Exception) as exc_info:
-        client.post(
-            f"{settings.API_V1_STR}/private/users/", json=payload
-        )
+    with pytest.raises(Exception):  # noqa: B017
+        client.post(f"{settings.API_V1_STR}/private/users/", json=payload)
+
 
 
 
@@ -74,18 +67,14 @@ def test_create_private_user_is_stored_in_db(
         "password": "password123",
         "full_name": "Stored User",
     }
-    response = client.post(
-        f"{settings.API_V1_STR}/private/users/", json=payload
-    )
+    response = client.post(f"{settings.API_V1_STR}/private/users/", json=payload)
     assert response.status_code == 200
     data = response.json()
 
-  
     user = db.exec(select(User).where(User.id == data["id"])).first()
     assert user is not None
     assert user.email == "stored@example.com"
     assert user.full_name == "Stored User"
- 
     assert user.hashed_password != "password123"
 
 
@@ -97,9 +86,7 @@ def test_create_private_user_default_not_superuser(
         "password": "password123",
         "full_name": "Default Role",
     }
-    response = client.post(
-        f"{settings.API_V1_STR}/private/users/", json=payload
-    )
+    response = client.post(f"{settings.API_V1_STR}/private/users/", json=payload)
     assert response.status_code == 200
     data = response.json()
 

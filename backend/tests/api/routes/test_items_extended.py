@@ -5,8 +5,6 @@ from sqlmodel import Session
 
 from app.core.config import settings
 from tests.utils.item import create_random_item
-from tests.utils.user import create_random_user
-from tests.utils.utils import random_lower_string
 
 
 
@@ -34,9 +32,7 @@ def test_read_item_no_auth(client: TestClient) -> None:
 
 def test_update_item_no_auth(client: TestClient) -> None:
     data = {"title": "Updated", "description": "Updated"}
-    response = client.put(
-        f"{settings.API_V1_STR}/items/{uuid.uuid4()}", json=data
-    )
+    response = client.put(f"{settings.API_V1_STR}/items/{uuid.uuid4()}", json=data)
     assert response.status_code == 401
     assert response.json()["detail"] == "Not authenticated"
 
@@ -53,7 +49,6 @@ def test_delete_item_no_auth(client: TestClient) -> None:
 def test_create_item_empty_title(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
-    # title min_length=1 on ItemBase, empty string should be rejected
     data = {"title": "", "description": "Some description"}
     response = client.post(
         f"{settings.API_V1_STR}/items/",
@@ -92,7 +87,6 @@ def test_create_item_missing_title(
 def test_create_item_no_description(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
-    # description is optional (default None), this should succeed
     data = {"title": "Title only"}
     response = client.post(
         f"{settings.API_V1_STR}/items/",
@@ -109,7 +103,6 @@ def test_create_item_no_description(
 def test_read_items_limit_zero(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
-    # ensure at least one item exists
     create_random_item(db)
     response = client.get(
         f"{settings.API_V1_STR}/items/?limit=0",
@@ -118,7 +111,6 @@ def test_read_items_limit_zero(
     assert response.status_code == 200
     content = response.json()
     assert content["data"] == []
-    # count still reflects total rows even when limit=0
     assert content["count"] >= 1
 
 
@@ -155,9 +147,7 @@ def test_normal_user_can_create_item(
 def test_normal_user_sees_only_own_items(
     client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
-    # create an item belonging to a different user directly in DB
     other_item = create_random_item(db)
-
     response = client.get(
         f"{settings.API_V1_STR}/items/",
         headers=normal_user_token_headers,
@@ -170,7 +160,7 @@ def test_normal_user_sees_only_own_items(
 
 
 def test_normal_user_can_update_own_item(
-    client: TestClient, normal_user_token_headers: dict[str, str], 
+    client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
     # create item as normal user first
     create_response = client.post(

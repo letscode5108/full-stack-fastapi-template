@@ -62,17 +62,13 @@ def test_reset_password_inactive_user(client: TestClient, db: Session) -> None:
     token = generate_password_reset_token(email=email)
     data = {"new_password": random_lower_string(), "token": token}
     response = client.post(f"{settings.API_V1_STR}/reset-password/", json=data)
-    # login.py reset_password: elif not user.is_active -> 400 "Inactive user"
     assert response.status_code == 400
     assert response.json()["detail"] == "Inactive user"
 
 
-def test_reset_password_new_password_too_short(
-    client: TestClient, superuser_token_headers: dict[str, str]
-) -> None:
+def test_reset_password_new_password_too_short(client: TestClient) -> None:
     from app.utils import generate_password_reset_token
 
-    # new_password has min_length=8 on NewPassword model
     token = generate_password_reset_token(email=settings.FIRST_SUPERUSER)
     data = {"new_password": "short", "token": token}
     response = client.post(f"{settings.API_V1_STR}/reset-password/", json=data)
